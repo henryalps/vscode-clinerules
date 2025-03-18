@@ -1,0 +1,106 @@
+{
+  "name": "clinerules",
+  "displayName": "Cline Rules",
+  "description": "Cline/Roo rules plugin. Automatically create .clinerules file for cline / roo etc.",
+  "version": "0.0.1",
+  "icon": "images/icon.png",
+  "author": {
+    "name": "henryalps",
+    "url": "https://henryalps.github.io"
+  },
+  "license": "MIT",
+  "keywords": [
+    "cline",
+    "ai",
+    "rules",
+    "productivity"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/henryalps/vscode-clinerules.git"
+  },
+  "publisher": "henryalps",
+  "engines": {
+    "vscode": "^1.93.0"
+  },
+  "categories": [
+    "Other",
+    "Programming Languages",
+    "Snippets"
+  ],
+  "activationEvents": [
+    "onCommand:clinerules.addRules",
+    "onCommand:clinerules.createRule",
+    "onCommand:clinerules.editRule",
+    "onCommand:clinerules.deleteRule",
+    "onCommand:clinerules.manageRule"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "clinerules.addRules",
+        "title": "Clinerules: Add Cline/Roo .clinerules file"
+      },
+      {
+        "command": "clinerules.createRule",
+        "title": "Clinerules: Create new Cline/Roo .clinerule"
+      },
+      {
+        "command": "clinerules.editRule",
+        "title": "Clinerules: Edit existing Cline/Roo .clinerule"
+      },
+      {
+        "command": "clinerules.deleteRule",
+        "title": "Clinerules: Delete Cline/Roo .clinerule"
+      },
+      {
+        "command": "clinerules.manageRule",
+        "title": "Clinerules: Manage all Cline/Roo .clinerule"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "clinerules.addRules",
+          "group": "2_workspace",
+          "when": "explorerResourceIsFolder"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "postinstall": "node ./scripts/copyRules.js",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.93.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@typescript-eslint/eslint-plugin": "^8.17.0",
+    "@typescript-eslint/parser": "^8.17.0",
+    "eslint": "^9.16.0",
+    "typescript": "^5.7.2",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1"
+  },
+  "galleryBanner": {
+    "color": "#C80000",
+    "theme": "dark"
+  },
+  "homepage": "https://github.com/henryalps/vscode-clinerules/blob/main/README.md",
+  "bugs": {
+    "url": "https://github.com/henryalps/vscode-clinerules/issues"
+  },
+  "files": [
+    "out/**/*",
+    "rules/**/*",
+    "images/**/*",
+    "LICENSE.md"
+  ]
+}
