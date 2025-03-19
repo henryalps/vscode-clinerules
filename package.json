@@ -2,7 +2,7 @@
   "name": "clinerules",
   "displayName": "Cline Rules",
   "description": "Cline/Roo rules plugin. Automatically create .clinerules file for cline / roo etc.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "icon": "images/icon.png",
   "author": {
     "name": "henryalps",
@@ -19,7 +19,7 @@
     "type": "git",
     "url": "https://github.com/henryalps/vscode-clinerules.git"
   },
-  "publisher": "henryalps",
+  "publisher": "ai-henryalps",
   "engines": {
     "vscode": "^1.93.0"
   },

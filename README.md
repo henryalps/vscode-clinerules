@@ -110,7 +110,11 @@ Currently, the plugin does not require special configuration and can be used aft
 
 ## Changelog
 
-### 1.0.0
+### 0.0.2
+
+- Published to vscode and open-vsx
+
+### 0.0.1
 
 - Initial version released
 

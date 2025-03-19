@@ -110,17 +110,17 @@
 
 ## 更新日志
 
-### 1.0.0
+### 0.0.2
+
+- 发布到 vscode 和 open-vsx
+
+### 0.0.1
 
 - 初始版本发布
 
 ## 贡献指南
 
 欢迎提交 Issue 和 Pull Requests 来帮助改进这个插件。
-
-## AI分享
-
-![AI分享知识星球](https://raw.githubusercontent.com/henryalps/vscode-clinerules/main/logo.png)
 
 ## 许可证
 
