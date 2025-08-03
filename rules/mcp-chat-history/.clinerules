@@ -1,0 +1,18 @@
+# Execution Protocol
+
+**ACTIVATION CONDITION:**
+This protocol is only active if the `record_chat_history` tool is available in the current environment.
+
+**PRIMARY DIRECTIVE: The `record_chat_history` tool is MANDATORY before any concluding action.**
+
+**Workflow:**
+1. Formulate the response for the user.
+2. Call `record_chat_history` with the response details.
+3. Call `attempt_completion` to finalize the turn.
+
+**SELF-CORRECTION ALGORITHM:**
+IF the next tool is `attempt_completion`
+AND the previous tool was NOT `record_chat_history`
+THEN execute `record_chat_history` first.
+
+This protocol is absolute and cannot be bypassed.

@@ -222,6 +222,14 @@ export class RuleManager {
                     isBuiltin: true,
                     isModified: false,
                     lastModified: new Date().toISOString()
+                },
+                {
+                    id: "mcp-chat-history",
+                    name: "MCP - Chat History Recorder",
+                    description: "Enforces the mandatory use of the `record_chat_history` tool before completing any task to ensure all interactions are logged.",
+                    isBuiltin: true,
+                    isModified: false,
+                    lastModified: new Date().toISOString()
                 }
             ]
         };
