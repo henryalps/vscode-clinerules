@@ -176,6 +176,46 @@ export class RuleManager {
                     lastModified: new Date().toISOString()
                 },
                 {
+                    id: "backend-springboot",
+                    name: "Backend - Spring Boot",
+                    description: "Spring Boot application development rules",
+                    isBuiltin: true,
+                    isModified: false,
+                    lastModified: new Date().toISOString()
+                },
+                {
+                    id: "backend-django",
+                    name: "Backend - Django",
+                    description: "Django web framework development rules",
+                    isBuiltin: true,
+                    isModified: false,
+                    lastModified: new Date().toISOString()
+                },
+                {
+                    id: "backend-rails",
+                    name: "Backend - Ruby on Rails",
+                    description: "Ruby on Rails web application development rules",
+                    isBuiltin: true,
+                    isModified: false,
+                    lastModified: new Date().toISOString()
+                },
+                {
+                    id: "backend-laravel",
+                    name: "Backend - Laravel",
+                    description: "Laravel PHP web framework development rules",
+                    isBuiltin: true,
+                    isModified: false,
+                    lastModified: new Date().toISOString()
+                },
+                {
+                    id: "backend-express",
+                    name: "Backend - Express.js",
+                    description: "Express.js Node.js web framework development rules",
+                    isBuiltin: true,
+                    isModified: false,
+                    lastModified: new Date().toISOString()
+                },
+                {
                     id: "general",
                     name: "General",
                     description: "General development rules, applicable to all projects",
