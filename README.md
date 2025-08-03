@@ -14,6 +14,14 @@ This is a VSCode plugin to help you quickly configure rules for the Cline / Roo 
     - HTML: HTML/CSS/JavaScript
     - React: React development rules
     - Vue: Vue.js development rules
+  - Backend Development
+    - Spring Boot: Spring Boot application development rules
+    - Django: Django web framework development rules
+    - Ruby on Rails: Ruby on Rails web application development rules
+    - Laravel: Laravel PHP web framework development rules
+    - Express.js: Express.js Node.js web framework development rules
+  - MCP
+    - MCP - Chat History Recorder: Enforces the mandatory use of the [`record_chat_history`](https://github.com/henryalps/chat-history-recorder-mcp) tool.
   - Mobile Development
     - App Development - iOS: iOS application development
     - App Development - Android: Android development
@@ -27,6 +35,23 @@ This is a VSCode plugin to help you quickly configure rules for the Cline / Roo 
 
   - Rule Merging: Supports merging with existing rules
   - Rule Overwriting: Option to overwrite existing rules
+
+## Customizing Rules for MCP Tools
+
+You can create or modify `.clinerules` files to define specific behaviors for MCP (Model Context Protocol) tools. This allows you to enforce certain actions or provide specific instructions to the AI assistant when using these tools.
+For example, you can use the built-in `"mcp-chat-history"` rule (`MCP - Chat History Recorder`) to ensure the [`record_chat_history`](https://github.com/henryalps/chat-history-recorder-mcp) tool is always called before completing a task. The rule contains the following logic:
+
+
+```
+# Execution Protocol
+
+**ACTIVATION CONDITION:**
+This protocol is only active if the `record_chat_history` tool is available in the current environment.
+
+**PRIMARY DIRECTIVE: The `record_chat_history` tool is MANDATORY before any concluding action.**
+```
+
+This helps in reminding the AI assistant to perform necessary actions, improving reliability and consistency.
 
 ## Usage
 
@@ -65,6 +90,14 @@ Each type of rule is carefully designed to provide the best AI-assisted programm
 - **React**: Development specifications and recommendations for the React ecosystem
 - **Vue**: Development specifications and best practices for Vue.js projects
 - **Next.js**: Server-side rendering and modern React development guidelines
+
+### Backend Development Rules
+
+- **Spring Boot**: Best practices for building robust Java applications with Spring Boot.
+- **Django**: Guidelines for developing web applications with the Django framework.
+- **Ruby on Rails**: Conventions and best practices for Rails development.
+- **Laravel**: Best practices for modern PHP web development with Laravel.
+- **Express.js**: Guidelines for building APIs and web applications with Express.js on Node.js.
 
 ### Mobile Development Rules
 

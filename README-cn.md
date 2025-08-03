@@ -14,6 +14,14 @@
     - HTML：HTML/CSS/JavaScript
     - React：React 开发规则
     - Vue：Vue.js 开发规则
+  - 后端开发
+    - Spring Boot: Spring Boot 应用开发规则
+    - Django: Django web 框架开发规则
+    - Ruby on Rails: Ruby on Rails web 应用开发规则
+    - Laravel: Laravel PHP web 框架开发规则
+    - Express.js: Express.js Node.js web 框架开发规则
+  - MCP
+    - MCP - Chat History Recorder: 强制要求使用 [`record_chat_history`](https://github.com/henryalps/chat-history-recorder-mcp) 工具。
   - 移动开发
     - App开发-iOS：iOS 应用开发
     - App开发-Android：Android 开发
@@ -27,6 +35,23 @@
 
   - 规则合并：支持与已有规则合并
   - 规则覆盖：可以选择覆盖已有规则
+
+## 自定义 MCP 工具规则
+
+您可以创建或修改 `.clinerules` 文件来为 MCP (Model Context Protocol) 工具定义特定行为。这使您可以在使用这些工具时强制执行某些操作或向 AI 助手提供特定指令。
+例如，您可以使用内置的 `"mcp-chat-history"` 规则 (`MCP - Chat History Recorder`) 来确保 [`record_chat_history`](https://github.com/henryalps/chat-history-recorder-mcp) 工具总是在完成任务之前被调用。该规则包含以下逻辑：
+
+
+```
+# 执行协议
+
+**激活条件:**
+本协议仅在当前环境中 `record_chat_history` 工具可用时激活。
+
+**主要指令: `record_chat_history` 工具在任何结束性操作之前都必须被调用。**
+```
+
+这有助于提醒 AI 助手执行必要的操作，从而提高可靠性和一致性。
 
 ## 使用方法
 
@@ -65,6 +90,14 @@
 - **React**: React 生态系统的开发规范和建议
 - **Vue**: Vue.js 项目的开发规范和最佳实践
 - **Next.js**: 服务端渲染和现代 React 开发指南
+
+### 后端开发规则
+
+- **Spring Boot**: 使用 Spring Boot 构建健壮的 Java 应用程序的最佳实践。
+- **Django**: 使用 Django 框架开发 Web 应用程序的指南。
+- **Ruby on Rails**: Rails 开发的约定和最佳实践。
+- **Laravel**: 使用 Laravel 进行现代 PHP Web 开发的最佳实践。
+- **Express.js**: 使用 Node.js 上的 Express.js 构建 API 和 Web 应用程序的指南。
 
 ### 移动开发规则
 
