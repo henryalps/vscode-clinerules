@@ -16,3 +16,7 @@ AND the previous tool was NOT `record_chat_history`
 THEN execute `record_chat_history` first.
 
 This protocol is absolute and cannot be bypassed.
+
+# From Rule Bank: test
+
+tests

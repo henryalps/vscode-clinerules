@@ -1,6 +1,6 @@
 # Cline Rules
 
-This is a VSCode plugin to help you quickly configure rules for the Cline / Roo AI programming assistant. With this plugin, you can easily add preset AI assistant rule files to your projects.
+This is a VSCode plugin to help you quickly configure rules for the Cline / Roo AI programming assistant. It supports managing rules in a project-specific `.clinerules/` or `.roo/` directory, as well as a central "Rule Bank" for templates.
 
 [中文文档](README-cn.md)
 
@@ -31,10 +31,11 @@ This is a VSCode plugin to help you quickly configure rules for the Cline / Roo 
     - Chrome Extension: Browser extension development
   - General Rules
     - General: Basic rules applicable to all projects
-- Convenient rule management:
-
-  - Rule Merging: Supports merging with existing rules
-  - Rule Overwriting: Option to overwrite existing rules
+- **Flexible Rule Management**:
+  - **Project Rules**: Manage rules directly within your project in a `.clinerules/rules` or `.roo/rules` directory.
+  - **Rule Bank**: Use a central repository of rule templates that you can add to any project.
+  - **Create and Edit**: Easily create new project-specific rules or edit existing ones.
+- **Easy Setup**: If no rule directory exists, the extension will offer to create one for you.
 
 ## Customizing Rules for MCP Tools
 
@@ -55,26 +56,24 @@ This helps in reminding the AI assistant to perform necessary actions, improving
 
 ## Usage
 
-### Method 1: Command Palette
+### Managing Project Rules
 
-1. Open your project folder in VSCode
-2. Open the command palette using `Ctrl+Shift+P` (Windows) or `Cmd+Shift+P` (Mac)
-3. Enter "Cline" or "Roo"
-4. Select the desired rule type from the list
-5. Confirm adding the rule
+- **Add Rule from Bank**:
+  - Right-click in the Explorer and select **Cline Rules: Add Project Rule from Bank**.
+  - Or run the command from the Command Palette.
+  - This will present a list of rules from your Rule Bank to copy into your project's `.clinerules/rules` or `.roo/rules` directory.
+- **New Project Rule**:
+  - Run **Cline Rules: New Project Rule** from the Command Palette to create a new, empty rule file in your project.
+- **Edit/Delete Project Rule**:
+  - Run **Cline Rules: Edit Rule** or **Cline Rules: Delete Rule** and select "Project Rule" to manage your project-specific rules.
 
-### Method 2: Right-Click Menu
+### Managing the Rule Bank
 
-1. In the VSCode Explorer
-2. Right-click on any folder
-3. Select "Clinerules: Add Cline/Roo .clinerules file"
-4. Select the rule type and confirm
-
-If a `.clinerules` file already exists at the target location, the plugin will provide the following options:
-
-- Overwrite: Replace existing rules with new rules
-- Merge: Merge new rules with existing rules
-- Cancel: Keep existing rules unchanged
+- Open the Command Palette (`Ctrl/Cmd+Shift+P`) and run **Cline Rules: Manage Rule Bank**.
+- This will open a panel where you can:
+  - Add a rule from the bank to your current project.
+  - Edit a rule template.
+  - Delete a rule template (custom rules only).
 
 ## Rule Descriptions
 
@@ -123,7 +122,13 @@ Each type of rule is carefully designed to provide the best AI-assisted programm
 
 ## Plugin Settings
 
-Currently, the plugin does not require special configuration and can be used after installation.
+You can customize the path to your "Rule Bank" by setting the `clinerules.ruleBankPath` in your VSCode settings. If not set, it defaults to `~/.cline-rules`.
+
+```json
+{
+  "clinerules.ruleBankPath": "/path/to/your/custom/rules/bank"
+}
+```
 
 ## Common Issues
 
@@ -142,6 +147,14 @@ Currently, the plugin does not require special configuration and can be used aft
    - Or find commands by right-clicking on a folder
 
 ## Changelog
+
+### 0.0.4
+
+- **Enhancement**: The extension now prioritizes a `.clinerules/` or `.roo/` directory for managing rules. The traditional single `.clinerules` file in the root is now used as a fallback for backward compatibility.
+- **Feature**: Introduced the "Rule Bank" concept, a central location for storing rule templates.
+- **Feature**: Commands are updated to distinguish between project rules and the rule bank.
+- **Feature**: Added a configuration setting `clinerules.ruleBankPath` to customize the rule bank location.
+- **Enhancement**: Improved command names and UI text for better clarity.
 
 ### 0.0.3
 

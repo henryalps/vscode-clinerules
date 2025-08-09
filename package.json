@@ -2,7 +2,7 @@
   "name": "clinerules",
   "displayName": "Cline Rules",
   "description": "Cline/Roo rules plugin. Automatically create .clinerules file for cline / roo etc.",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "icon": "images/icon.png",
   "author": {
     "name": "henryalps",
@@ -29,44 +29,68 @@
     "Snippets"
   ],
   "activationEvents": [
-    "onCommand:clinerules.addRules",
+    "onCommand:clinerules.addRuleFromBank",
     "onCommand:clinerules.createRule",
     "onCommand:clinerules.editRule",
     "onCommand:clinerules.deleteRule",
-    "onCommand:clinerules.manageRule"
+    "onCommand:clinerules.manageRuleBank"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "clinerules.addRules",
-        "title": "Clinerules: Add Cline/Roo .clinerules file"
+        "command": "clinerules.addRuleFromBank",
+        "title": "Cline Rules: Add Project Rule from Bank"
       },
       {
         "command": "clinerules.createRule",
-        "title": "Clinerules: Create new Cline/Roo .clinerule"
+        "title": "Cline Rules: New Project Rule"
       },
       {
         "command": "clinerules.editRule",
-        "title": "Clinerules: Edit existing Cline/Roo .clinerule"
+        "title": "Cline Rules: Edit Rule"
       },
       {
         "command": "clinerules.deleteRule",
-        "title": "Clinerules: Delete Cline/Roo .clinerule"
+        "title": "Cline Rules: Delete Rule"
       },
       {
-        "command": "clinerules.manageRule",
-        "title": "Clinerules: Manage all Cline/Roo .clinerule"
+        "command": "clinerules.manageRuleBank",
+        "title": "Cline Rules: Manage Rule Bank"
+      },
+      {
+        "command": "clinerules.openRuleBankDirectory",
+        "title": "Cline Rules: Open Rule Bank Directory (Internal)"
       }
     ],
     "menus": {
       "explorer/context": [
         {
-          "command": "clinerules.addRules",
+          "command": "clinerules.addRuleFromBank",
           "group": "2_workspace",
           "when": "explorerResourceIsFolder"
         }
+      ],
+      "commandPalette": [
+        {
+          "command": "clinerules.manageRuleBank",
+          "when": "true"
+        },
+        {
+          "command": "clinerules.openRuleBankDirectory",
+          "when": "false"
+        }
       ]
+    },
+    "configuration": {
+      "title": "Cline/Roo Rules",
+      "properties": {
+        "clinerules.ruleBankPath": {
+          "type": "string",
+          "default": "",
+          "description": "Specifies the path to the Cline/Roo rule bank directory. If not set, defaults to ~/.cline-rules."
+        }
+      }
     }
   },
   "scripts": {

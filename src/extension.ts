@@ -1,5 +1,3 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -19,184 +17,182 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// Register commands
 	let disposables = [
-		// Command to refresh rule panel
-		vscode.commands.registerCommand('clinerules.manageRule', async (rules?: any[]) => {
-			const displayRules = rules || await ruleManager.getAllRules();
-			RulePanel.show(context, displayRules);
+		vscode.commands.registerCommand('clinerules.manageRuleBank', async () => {
+			const rules = await ruleManager.getAllRules(true);
+			RulePanel.show(context, rules, true);
 		}),
 
-		// Original add rules command
-		vscode.commands.registerCommand('clinerules.addRules', async (uri?: vscode.Uri) => {
+		vscode.commands.registerCommand('clinerules.addRuleFromBank', async (ruleId?: string) => {
 			try {
-				// 1. Get target path
-				let targetFolder: string;
-				if (uri) {
-					targetFolder = uri.fsPath;
-				} else {
-					const workspaceFolders = vscode.workspace.workspaceFolders;
-					if (!workspaceFolders) {
-						vscode.window.showErrorMessage('Please open a workspace folder first!');
-						return;
-					}
-					targetFolder = workspaceFolders[0].uri.fsPath;
-				}
+				const projectConfig = ruleManager.getProjectRuleConfig();
 
-				// 2. Get all rules
-				const rules = await ruleManager.getAllRules();
-				
-				// 3. Let user select rule
-				const selectedRule = await vscode.window.showQuickPick(
-					rules.map(rule => ({
-						label: rule.name,
-						folder: rule.id,
-						description: rule.description,
-						detail: 'Click to add rule',
-						rule: rule
-					})), {
-						placeHolder: 'Select rule type to add',
-					}
-				);
-
-				if (!selectedRule) {
-					return;
-				}
-
-				// 4. Confirm to add
-				const confirmed = await confirmAction(`Are you sure to add Cline rule of ${selectedRule.label}?`);
-				if (!confirmed) {
-					return;
-				}
-
-				// 5. Process rule file
-				const targetPath = path.join(targetFolder, '.clinerules');
-				const sourcePath = path.join(context.extensionPath, 'rules', selectedRule.folder, '.clinerules');
-
-				if (fs.existsSync(targetPath)) {
-					const action = await vscode.window.showWarningMessage(
-						'Target directory already has .clinerules file, please select action:',
-						'Overwrite',
-						'Merge',
-						'Cancel'
+				let selectedRuleId = ruleId;
+				if (!selectedRuleId) {
+					const rules = await ruleManager.getAllRules(true);
+					const selectedRule = await vscode.window.showQuickPick(
+						rules.map(rule => ({
+							label: rule.name,
+							description: rule.description,
+							id: rule.id
+						})), {
+							placeHolder: 'Select a rule from the bank to add to the project',
+						}
 					);
+					if (!selectedRule) return;
+					selectedRuleId = selectedRule.id;
+				}
+				
+				const rule = (await ruleManager.getAllRules(true)).find(r => r.id === selectedRuleId);
+				if (!rule) {
+					vscode.window.showErrorMessage(`Rule with id ${selectedRuleId} not found in bank.`);
+					return;
+				}
 
-					if (action === 'Cancel' || !action) {
-						return;
-					}
-
-					if (action === 'Merge') {
-						const sourceContent = fs.readFileSync(sourcePath, 'utf8');
-						const targetContent = fs.readFileSync(targetPath, 'utf8');
-						const mergedContent = `# Original rules\n${targetContent}\n\n# New rules\n${sourceContent}`;
-						fs.writeFileSync(targetPath, mergedContent);
-						vscode.window.showInformationMessage(`Successfully merged Cline rule of ${selectedRule.label}!`);
+				const bankPath = ruleManager.getRuleBankPath();
+				const sourcePathMd = path.join(bankPath, `${selectedRuleId}.md`);
+				const sourcePathDir = path.join(bankPath, selectedRuleId, '.clinerules');
+				
+				let sourceRulePath;
+				if (fs.existsSync(sourcePathMd)) {
+					sourceRulePath = sourcePathMd;
+				} else if (fs.existsSync(sourcePathDir)) {
+					sourceRulePath = sourcePathDir;
+				} else {
+					// Fallback for built-in rules from the extension's own 'rules' dir
+					const builtinPath = path.join(context.extensionPath, 'rules', selectedRuleId, '.clinerules');
+					if (fs.existsSync(builtinPath)) {
+						sourceRulePath = builtinPath;
+					} else {
+						vscode.window.showErrorMessage(`Could not find rule file for "${rule.name}" in the rule bank.`);
 						return;
 					}
 				}
+				
+				if (projectConfig.type === 'dir') {
+					const targetRulesDir = path.join(projectConfig.path, 'rules');
+					if (!fs.existsSync(targetRulesDir)) {
+						fs.mkdirSync(targetRulesDir, { recursive: true });
+					}
+					const targetRulePath = path.join(targetRulesDir, `${path.basename(rule.name)}.md`);
+	
+					if(fs.existsSync(targetRulePath)) {
+						vscode.window.showErrorMessage(`Rule "${rule.name}" already exists in the project.`);
+						return;
+					}
+	
+					fs.copyFileSync(sourceRulePath, targetRulePath);
+					vscode.window.showInformationMessage(`Successfully added rule "${rule.name}" to the project.`);
+				} else { // Handles 'file' and 'none'
+					const targetPath = projectConfig.type === 'file' ? projectConfig.path : path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, '.clinerules');
+					const sourceContent = fs.readFileSync(sourceRulePath, 'utf8');
 
-				fs.copyFileSync(sourcePath, targetPath);
-				vscode.window.showInformationMessage(`Successfully added Cline rule of ${selectedRule.label}!`);
-
-				RulePanel.show(context, rules);
+					if (fs.existsSync(targetPath)) {
+						const targetContent = fs.readFileSync(targetPath, 'utf8');
+						const mergedContent = `${targetContent}\n\n# From Rule Bank: ${rule.name}\n\n${sourceContent}`;
+						fs.writeFileSync(targetPath, mergedContent);
+						vscode.window.showInformationMessage(`Successfully merged rule "${rule.name}" into .clinerules file.`);
+					} else {
+						fs.writeFileSync(targetPath, sourceContent);
+						vscode.window.showInformationMessage(`Successfully created .clinerules file with rule "${rule.name}".`);
+					}
+				}
 
 			} catch (error) {
-				vscode.window.showErrorMessage(`Failed to add rule: ${error}`);
+				vscode.window.showErrorMessage(`Failed to add rule from bank: ${error}`);
 			}
 		}),
 
-		// Create new rule command
 		vscode.commands.registerCommand('clinerules.createRule', async () => {
 			try {
 				const name = await vscode.window.showInputBox({
-					prompt: 'Enter new rule type name',
-					placeHolder: 'e.g.: Java development'
+					prompt: 'Enter new project rule name',
+					placeHolder: 'e.g.: my-custom-rule'
 				});
-
-				if (!name) {
-					return;
-				}
+				if (!name) return;
 
 				const description = await vscode.window.showInputBox({
 					prompt: 'Enter rule description',
-					placeHolder: 'e.g.: Rules for Java backend development'
+					placeHolder: 'e.g.: A custom rule for my project'
 				});
+				if (!description) return;
 
-				if (!description) {
-					return;
-				}
-
-				await ruleManager.createRule(name, description);
-				vscode.window.showInformationMessage(`Successfully created rule type: ${name}`);
+				await ruleManager.createRule(name, description, false);
 
 			} catch (error) {
 				vscode.window.showErrorMessage(`Failed to create rule: ${error}`);
 			}
 		}),
 
-		// Edit rule command
-		vscode.commands.registerCommand('clinerules.editRule', async () => {
+		vscode.commands.registerCommand('clinerules.editRule', async (args) => {
 			try {
-				const rules = await ruleManager.getAllRules();
-				const selectedRule = await vscode.window.showQuickPick(
-					rules.map(rule => ({
-						label: rule.name,
-						description: rule.description,
-						detail: rule.isBuiltin ? 'Builtin Rule' : 'Custom Rule',
-						rule: rule
-					})), {
-						placeHolder: 'Select rule to edit',
+				let id = args?.id;
+				let fromBank = args?.fromBank;
+				
+				if (id === undefined) {
+					const scope = await vscode.window.showQuickPick(['Project Rule', 'Rule Bank'], { placeHolder: 'Select rule scope to edit' });
+					if (!scope) return;
+					fromBank = scope === 'Rule Bank';
+	
+					const rules = await ruleManager.getAllRules(fromBank);
+					if (rules.length === 0) {
+						vscode.window.showInformationMessage('No rules found in this scope.');
+						return;
 					}
-				);
-
-				if (!selectedRule) {
-					return;
+					const selectedRule = await vscode.window.showQuickPick(
+						rules.map(rule => ({ label: rule.name, description: rule.description, id: rule.id })),
+						{ placeHolder: 'Select a rule to edit' }
+					);
+					if (!selectedRule) return;
+					id = selectedRule.id;
 				}
 
-				await ruleManager.editRule(selectedRule.rule.id);
+				await ruleManager.editRule(id, fromBank);
 
 			} catch (error) {
 				vscode.window.showErrorMessage(`Failed to edit rule: ${error}`);
 			}
 		}),
 
-		// Delete rule command
-		vscode.commands.registerCommand('clinerules.deleteRule', async () => {
+		vscode.commands.registerCommand('clinerules.deleteRule', async (args) => {
 			try {
-				const rules = await ruleManager.getAllRules();
-				const customRules = rules;
+				let id = args?.id;
+				let fromBank = args?.fromBank;
 
-				if (customRules.length === 0) {
-					vscode.window.showInformationMessage('No custom rules can be deleted');
-					return;
-				}
+				if (id === undefined) {
+					const scope = await vscode.window.showQuickPick(['Project Rule', 'Rule Bank'], { placeHolder: 'Select rule scope to delete' });
+					if (!scope) return;
+					fromBank = scope === 'Rule Bank';
 
-				const selectedRule = await vscode.window.showQuickPick(
-					customRules.map(rule => ({
-						label: rule.name,
-						description: rule.description,
-						detail: 'Click to delete rule',
-						rule: rule
-					})), {
-						placeHolder: 'Select rule to delete',
+					const rules = await ruleManager.getAllRules(fromBank);
+					if (rules.length === 0) {
+						vscode.window.showInformationMessage('No rules found in this scope.');
+						return;
 					}
-				);
-
-				if (!selectedRule) {
-					return;
+					const selectedRule = await vscode.window.showQuickPick(
+						rules.map(rule => ({ label: rule.name, description: rule.description, id: rule.id })),
+						{ placeHolder: 'Select rule to delete' }
+					);
+					if (!selectedRule) return;
+					id = selectedRule.id;
 				}
-
-				const confirmed = await confirmAction(`Are you sure to delete rule ${selectedRule.label}? This operation cannot be recovered.`);
-				if (!confirmed) {
-					return;
+				
+				const ruleName = (await ruleManager.getAllRules(fromBank)).find(r => r.id === id)?.name || id;
+				const confirmed = await confirmAction(`Are you sure you want to delete the rule "${ruleName}"?`);
+				if (confirmed) {
+					await ruleManager.deleteRule(id, fromBank);
 				}
-
-				await ruleManager.deleteRule(selectedRule.rule.id);
-				vscode.window.showInformationMessage(`Successfully deleted rule: ${selectedRule.label}`);
-
 			} catch (error) {
 				vscode.window.showErrorMessage(`Failed to delete rule: ${error}`);
 			}
 		})
 	];
+
+	disposables.push(
+		vscode.commands.registerCommand('clinerules.openRuleBankDirectory', () => {
+			const bankPath = ruleManager.getRuleBankPath();
+			vscode.env.openExternal(vscode.Uri.file(bankPath));
+		})
+	);
 
 	context.subscriptions.push(...disposables);
 }
@@ -215,26 +211,14 @@ function getRuleDescription(rulePath: string): string {
 	return 'No description';
 }
 
-// Remove showRulePreview function, change to directly display confirmation dialog
 async function confirmAction(message: string): Promise<boolean> {
-	const result = await vscode.window.showInformationMessage(
+	const result = await vscode.window.showWarningMessage(
 		message,
-		'Confirm',
-		'Cancel'
+		{ modal: true },
+		'Confirm'
 	);
 	return result === 'Confirm';
 }
 
 // This method is called when your extension is deactivated
-export function deactivate() {
-    try {
-        const homedir = require('os').homedir();
-        const userRulesPath = require('path').join(homedir, '.cline-rules');
-        if (require('fs').existsSync(userRulesPath)) {
-            require('fs').rmSync(userRulesPath, { recursive: true, force: true });
-            console.log('Successfully cleaned up user rules directory');
-        }
-    } catch (error) {
-        console.error('Failed to clean up user rules directory:', error);
-    }
-}
+export function deactivate() {}
