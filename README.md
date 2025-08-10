@@ -148,6 +148,11 @@ You can customize the path to your "Rule Bank" by setting the `clinerules.ruleBa
 
 ## Changelog
 
+### 0.0.6
+
+- **Enhancement**: When creating rules in a project with no prior setup, the extension now prompts the user to create a modern rule directory, with an option for the legacy single-file format.
+
+
 ### 0.0.5
 
 - **Fix**: Resolved an issue where the "Manage Rule Bank" command would fail if the rule bank path was not pre-existing, particularly when using `~` in the path. The extension now ensures the directory is created on-demand.

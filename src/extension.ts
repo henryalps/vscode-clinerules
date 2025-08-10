@@ -83,16 +83,38 @@ export function activate(context: vscode.ExtensionContext) {
 	
 					fs.copyFileSync(sourceRulePath, targetRulePath);
 					vscode.window.showInformationMessage(`Successfully added rule "${rule.name}" to the project.`);
-				} else { // Handles 'file' and 'none'
-					const targetPath = projectConfig.type === 'file' ? projectConfig.path : path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, '.clinerules');
+				} else if (projectConfig.type === 'file') {
+					// Merge with existing legacy file
 					const sourceContent = fs.readFileSync(sourceRulePath, 'utf8');
+					const targetContent = fs.readFileSync(projectConfig.path, 'utf8');
+					const mergedContent = `${targetContent}\n\n# From Rule Bank: ${rule.name}\n\n${sourceContent}`;
+					fs.writeFileSync(projectConfig.path, mergedContent);
+					vscode.window.showInformationMessage(`Successfully merged rule "${rule.name}" into .clinerules file.`);
+				} else { // Handles 'none'
+					const items: vscode.QuickPickItem[] = [
+						{ label: 'Create .clinerules folder' },
+						{ label: 'Create .roo folder' },
+						{ label: '(Deprecated) Create a single .clinerules file', description: 'Use the legacy file format' }
+					];
+					const choice = await vscode.window.showQuickPick(items, {
+						placeHolder: 'No rule configuration found. Choose how to proceed.'
+					});
 
-					if (fs.existsSync(targetPath)) {
-						const targetContent = fs.readFileSync(targetPath, 'utf8');
-						const mergedContent = `${targetContent}\n\n# From Rule Bank: ${rule.name}\n\n${sourceContent}`;
-						fs.writeFileSync(targetPath, mergedContent);
-						vscode.window.showInformationMessage(`Successfully merged rule "${rule.name}" into .clinerules file.`);
-					} else {
+					if (!choice) return;
+					
+					if (choice.label.includes('folder')) {
+						const folderName = choice.label.split(' ')[1];
+						const dirToCreate = path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, folderName);
+						const rulesDir = path.join(dirToCreate, 'rules');
+						fs.mkdirSync(rulesDir, { recursive: true });
+						
+						const targetRulePath = path.join(rulesDir, `${path.basename(rule.name)}.md`);
+						fs.copyFileSync(sourceRulePath, targetRulePath);
+
+						vscode.window.showInformationMessage(`Created ${folderName} and added rule "${rule.name}".`);
+					} else { // Deprecated option
+						const targetPath = path.join(vscode.workspace.workspaceFolders![0].uri.fsPath, '.clinerules');
+						const sourceContent = fs.readFileSync(sourceRulePath, 'utf8');
 						fs.writeFileSync(targetPath, sourceContent);
 						vscode.window.showInformationMessage(`Successfully created .clinerules file with rule "${rule.name}".`);
 					}
