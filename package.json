@@ -2,7 +2,7 @@
   "name": "clinerules",
   "displayName": "Cline Rules",
   "description": "Cline/Roo rules plugin. Automatically create .clinerules file for cline / roo etc.",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "icon": "images/icon.png",
   "author": {
     "name": "henryalps",

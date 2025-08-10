@@ -148,6 +148,10 @@ You can customize the path to your "Rule Bank" by setting the `clinerules.ruleBa
 
 ## Changelog
 
+### 0.0.5
+
+- **Fix**: Resolved an issue where the "Manage Rule Bank" command would fail if the rule bank path was not pre-existing, particularly when using `~` in the path. The extension now ensures the directory is created on-demand.
+
 ### 0.0.4
 
 - **Enhancement**: The extension now prioritizes a `.clinerules/` or `.roo/` directory for managing rules. The traditional single `.clinerules` file in the root is now used as a fallback for backward compatibility.

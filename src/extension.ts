@@ -18,6 +18,7 @@ export function activate(context: vscode.ExtensionContext) {
 	// Register commands
 	let disposables = [
 		vscode.commands.registerCommand('clinerules.manageRuleBank', async () => {
+			ruleManager.refreshFromConfig();
 			const rules = await ruleManager.getAllRules(true);
 			RulePanel.show(context, rules, true);
 		}),
@@ -195,6 +196,16 @@ export function activate(context: vscode.ExtensionContext) {
 	);
 
 	context.subscriptions.push(...disposables);
+
+	// Add a listener for configuration changes
+	context.subscriptions.push(
+		vscode.workspace.onDidChangeConfiguration(e => {
+			if (e.affectsConfiguration('clinerules.ruleBankPath')) {
+				// Refresh the rule manager's config when the path changes
+				ruleManager.refreshFromConfig();
+			}
+		})
+	);
 }
 
 // Get rule file description (read the first few lines of the file as description)

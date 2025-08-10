@@ -28,10 +28,22 @@ export class RuleManager {
     };
 
     constructor(private context: vscode.ExtensionContext) {
+        this.ruleBankPath = ''; // Initialize with empty string
+        this.configPath = '';
+        this.refreshFromConfig();
+    }
+
+    public refreshFromConfig() {
         const config = vscode.workspace.getConfiguration('clinerules');
-        this.ruleBankPath = config.get('ruleBankPath') || path.join(os.homedir(), '.cline-rules');
-        this.configPath = path.join(this.ruleBankPath, 'config.json');
-        this.initializeRuleBank();
+        const configPathSetting = config.get('ruleBankPath') as string | undefined;
+
+        const newRuleBankPath = (configPathSetting || path.join(os.homedir(), '.cline-rules')).replace(/^~/, os.homedir());
+
+        if (this.ruleBankPath !== newRuleBankPath || !fs.existsSync(newRuleBankPath)) {
+            this.ruleBankPath = newRuleBankPath;
+            this.configPath = path.join(this.ruleBankPath, 'config.json');
+            this.initializeRuleBank();
+        }
     }
 
     private initializeRuleBank() {
