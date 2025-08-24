@@ -1,4 +1,10 @@
-# Cline Rules
+<h1 align="center">Cline Rules</h1>
+
+<p align="center">
+  <a href="https://marketplace.visualstudio.com/items?itemName=ai-henryalps.clinerules" target="_blank">
+    <img src="logo.png" alt="Cline Rules Logo" style="width: 10%;">
+  </a>
+</p>
 
 This is a VSCode plugin to help you quickly configure rules for the Cline / Roo AI programming assistant. It supports managing rules in a project-specific `.clinerules/` or `.roo/` directory, as well as a central "Rule Bank" for templates.
 
@@ -74,6 +80,18 @@ This helps in reminding the AI assistant to perform necessary actions, improving
   - Add a rule from the bank to your current project.
   - Edit a rule template.
   - Delete a rule template (custom rules only).
+
+## Updating the Rule Bank
+
+The official Cline Rules bank is now managed in a separate Git repository. To get the latest updates, you can pull from the repository.
+
+Run the following command in your terminal to update your local rule bank (default location `~/.cline-rules`):
+
+```bash
+git clone https://github.com/henryalps/cline-rules.git ~/.cline-rules-temp && cp -r ~/.cline-rules-temp/* ~/.cline-rules/ && rm -rf ~/.cline-rules-temp
+```
+
+If you have configured a custom path for your rule bank, replace `~/.cline-rules` with your custom path.
 
 ## Rule Descriptions
 

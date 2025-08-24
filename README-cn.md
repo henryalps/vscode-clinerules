@@ -1,8 +1,14 @@
-# Cline Rules
+<h1 align="center">Cline Rules</h1>
+
+<p align="center">
+  <a href="https://marketplace.visualstudio.com/items?itemName=ai-henryalps.clinerules" target="_blank">
+    <img src="logo.png" alt="Cline Rules Logo" style="width: 10%;">
+  </a>
+</p>
 
 这是一个帮助你快速配置 Cline / Roo AI 编程助手规则的 VSCode 插件。它支持在项目特定的 `.clinerules/` 或 `.roo/` 目录中管理规则，以及一个用于存放模板的中央“规则银行”。
 
-[English Document](README-en.md)
+[English Document](README.md)
 
 ## 功能特点
 
@@ -74,6 +80,18 @@
   - 将规则银行中的规则添加到当前项目。
   - 编辑规则模板。
   - 删除规则模板（仅限自定义规则）。
+
+## 更新规则银行
+
+官方的 Cline Rules 规则银行现在在一个独立的 Git 仓库中进行管理。要获取最新的更新，你可以从该仓库拉取。
+
+在你的终端中运行以下命令来更新你的本地规则银行（默认位置 `~/.cline-rules`）：
+
+```bash
+git clone https://github.com/henryalps/cline-rules.git ~/.cline-rules-temp && cp -r ~/.cline-rules-temp/* ~/.cline-rules/ && rm -rf ~/.cline-rules-temp
+```
+
+如果你为规则银行配置了自定义路径，请将 `~/.cline-rules` 替换为你的自定义路径。
 
 ## 规则说明
 
